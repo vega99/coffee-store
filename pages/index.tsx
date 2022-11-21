@@ -1,12 +1,32 @@
 import Head from "next/head";
 import Image from "next/image";
 import Banner from "../components/banner";
+import Card from "../components/card";
 import styles from "../styles/Home.module.css";
+import coffeeStoresData from "../data/coffee-stores.json";
+import { GetStaticProps } from "next";
 
-export default function Home() {
-    const handleOnBannerClick = () => {
-        console.log("click");
+interface Props {
+    coffeeStores: {
+        id: number;
+        name: string;
+        imgUrl: string;
+        websiteUrl: string;
+        address: string;
+        neighbourhood: string;
+    }[];
+}
+
+export const getStaticProps: GetStaticProps = async (context) => {
+    return {
+        props: {
+            coffeeStores: coffeeStoresData,
+        }, // will be passed to the page component as props
     };
+};
+
+export default function Home(props: Props) {
+    const handleOnBannerClick = () => {};
 
     return (
         <div className={styles.container}>
@@ -28,6 +48,22 @@ export default function Home() {
                         alt="image"
                     />
                 </div>
+                {props.coffeeStores.length > 0 && (
+                    <>
+                        <h2 className={styles.heading2}>Ojo de Agua Stores</h2>
+                        <div className={styles.cardLayout}>
+                            {props.coffeeStores.map((coffeStore) => (
+                                <Card
+                                    key={coffeStore.id}
+                                    name={coffeStore.name}
+                                    href={`/coffee-store/${coffeStore.id}`}
+                                    imgUrl={coffeStore.imgUrl}
+                                    className={styles.card}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
             </main>
         </div>
     );
